@@ -1,7 +1,6 @@
 const express=require("express")
 const cors=require("cors")
 const pool=require("./db")
-const client=require("./twilio_client")
 const app=express()
 const check_user=require("./components/check_user")
 
@@ -14,41 +13,48 @@ app.listen(3000,()=>{
     console.log("server listening at port 3000...")
 })
 
-//apis
-
-//1.sendotp
-app.post("/user/sendotp",async (req,res)=>{
-    const {id}=req.body
-    // try{
-    //     result=await pool.query("SELECT * FROM USERS WHERE ID=$1",[id])//check user exists
-
-    // }catch(err){
-    //     console.log("database error")
-    //     res.json(err)
-    // }
-    x=await check_user(pool,id)
-    if (x==1){//new user
-        console.log("new user")
-        console.log(result)
-        const otp = Math.floor(9100000 + Math.random() * 900000).toString();
-        console.log(otp)
-        console.log(id)
-        try {
-            // await client.messages.create({
-            //     body: `Your OTP is ${otp}`,
-            //     from: "+15013007976",
-            //     to: id
-            // });
-            pool.query("INSERT INTO ")
-            console.log("message sent");
-
-            res.json({ message: "OTP sent successfully" });
-        } catch (err) {
-            res.status(500).json({ error: "Failed to send OTP",reason:err });
+//routes
+app.post("/user/register", async (req, res) => {
+    const {id, fname, lname, password} = req.body;
+    try{
+        if (await check_user(pool, id) == 0) {
+            throw 1;
         }
+        await pool.query("insert into users (id, firstname, lastname, password) values ($1, $2, $3, $4)", [id, fname, lname, password]);
+        res.status(201).json({ message: "user registered successfully" });
 
+    }catch (err) {
+        if (err==1){
+            res.status(403).json({ message: "user already registered" });
+        }else{
+        res.status(500).json({ error: "failed to register user", reason: err.message });
+        }
     }
-    else{//user already exists
-        res.status(403).send("user already registered")
+});
+
+app.get("/user/login", async (req, res) => {
+    const {id, password} = req.body;
+    try {
+        const result = await pool.query("select * from users where id = $1 and password = $2", [id, password]);
+        if (result.rowCount) {
+            res.status(200).json(result.rows[0]);
+        } else {
+            res.status(403).json({ message: "login failed" });
+        }
+    } catch (err) {
+        res.status(500).json({ error: "failed to login", reason: err.message });
     }
-})
+});
+app.delete("/user/delete/:id", async (req, res) => {
+    const {id} = req.params;
+    try {
+        const result = await pool.query("delete from users where id = $1", [id]);
+        if (result.rowCount) {
+            res.status(200).json({ message: "user deleted successfully" });
+        } else {
+            res.status(403).json({ message: "user not found" });
+        }
+    } catch (err) {
+        res.status(500).json({ error: "failed to delete user", reason: err.message });
+    }
+});
