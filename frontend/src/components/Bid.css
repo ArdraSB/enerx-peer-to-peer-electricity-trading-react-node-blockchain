@@ -1,0 +1,114 @@
+/* Background blur effect when the dialog is open */
+.bid-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4); /* Dark transparent overlay */
+    backdrop-filter: blur(10px); /* Blur effect */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it stays on top */
+}
+.bid input {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px; /* Ensures placeholder text is readable */
+    color: black; /* Text color */
+    background: white; /* Ensures input field has a visible background */
+}
+.bid input::placeholder{
+    color: rgba(0, 0, 0, 0.426);
+}
+/* Dialog box styling */
+.bid {
+    background: rgba(16, 14, 14, 0.2);
+    padding: 20px;
+    width: 300px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(181, 179, 179, 0.592);
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Input fields styling */
+/* .bid input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+} */
+
+/* Buttons container */
+.bid-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+/* Cancel button */
+.cancel {
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.cancel:hover {
+    background: #e60000;
+}
+
+/* Submit button */
+.submit {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.submit:hover {
+    background: #388e3c;
+}
+
+/* Plus Button Styling */
+.addicon {
+    background: black;
+    color: white;
+    padding: 10px;
+    /* border-radius: 30%; */
+    border: 2px solid grey;
+    cursor: pointer;
+    transition: background 0.3s;
+    /* position:; */
+    bottom: 40px;
+    right: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.addicon:hover {
+    background: #333;
+}
