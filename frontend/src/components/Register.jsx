@@ -1,22 +1,29 @@
 import React, { useState } from 'react';
 import './Register.css'
 import Input from './Input';
-import { Link } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
+import {login,register} from "../backend_integration/apis"
+
+
+
+
 
 function Register() {
 
-        
-        
-
     
     const [action,setaction] = useState("Login")
-    const Sub =(e) => {
-        e.preventDefault()
+    const navigate=useNavigate()
+    const submit=async (e)=>{
+        console.log("hai")
+        e.preventDefault();
         const form=e.target
         const data=new FormData(form)
         const formJson= Object.fromEntries(data.entries());
         console.log(formJson);
+        action=="Login"?await login(formJson,navigate):await register(formJson);
+    
     }
+    
     return(
         <div className="full">
     <div className="cont">
@@ -25,22 +32,24 @@ function Register() {
     </div>
     
     <div className="board">
-        <form  onSubmit={Sub}>
+        <form  onSubmit={submit}>
         {action ==="Register"?
             <div className='reg'>
-            <Input  type="text" name='Name' place='Name' />   
-            <Input type="tel" name='phone' place='Phone' />     
-        <Input type='text' name='ConsumerID' place="Consumer ID" />
+            <Input  type="text" name='fname' place='First Name' />   
+            <Input  type="text" name='lname' place='Last Name' />   
+
+            <Input type="text" name='id' place='Phone' />     
+        <Input type='text' name='Consumerid' place="Consumer ID" />
         <Input type='password' name='password' place="Password" />
         <Input type='text' name='cnfrmpassword' place="Confirm Password" />
         </div> :  <div className='log'>
-        <Input type='tel' name='phone' place="Phone" />
+        <Input type='text' name='id' place="Phone" />
         <Input type='password' name='password' place='password'/>
                 </div> }
         
         
         
-        <button type='submit' id='sub'><Link to='/Offers'>Submit</Link></button>
+        <button type='submit' id='sub'>Submit</button>
         </form>
         
     </div>
@@ -51,6 +60,7 @@ function Register() {
    
 )
 }
+
 
 
 

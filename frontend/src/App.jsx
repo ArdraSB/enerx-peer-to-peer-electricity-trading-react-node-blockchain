@@ -4,7 +4,7 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import Register from './components/Register'
 import Offers from './components/Offers'
-import Navbar from './components/navbar'
+import Navbar from './components/Navbar'
 import Transactions from './components/Transactions'
 import Profile from './components/Profile'
 import { Route,Routes} from "react-router-dom";//new package for routing

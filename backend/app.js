@@ -15,6 +15,7 @@ app.listen(3000,()=>{
 
 //routes
 app.post("/user/register", async (req, res) => {
+    console.log(req.body);
     const {id, fname, lname, password} = req.body;
     try{
         if (await check_user(pool, id) == 0) {
@@ -32,8 +33,9 @@ app.post("/user/register", async (req, res) => {
     }
 });
 
-app.get("/user/login", async (req, res) => {
+app.post("/user/login", async (req, res) => {
     const {id, password} = req.body;
+    console.log("request received",id,password);
     try {
         const result = await pool.query("select * from users where id = $1 and password = $2", [id, password]);
         if (result.rowCount) {

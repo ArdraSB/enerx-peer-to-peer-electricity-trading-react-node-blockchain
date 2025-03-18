@@ -4,46 +4,56 @@ import './Offers.css'
 import './Bid.css'
 import Input from './Input';
 import { FaCoins, FaBoxOpen, FaEthereum ,FaPlus} from "react-icons/fa"; // Import icons
+import {createOffer, haveWallet,listOffers} from '../backend_integration/smart_contract_calls'
 
 
-
-
+let data=await listOffers();
 function Offers() {
     const [isbid,setisBid] = useState(false);
     
-    const Sub =(e) => {
+    const Sub =async (e) => {
         e.preventDefault()
         const form=e.target
         const frmdata=new FormData(form)
         const formJson= Object.fromEntries(frmdata.entries());
         console.log("bid details",formJson);
+        await createOffer(formJson);
         setisBid(false);
+    }
+    const reload=async()=>{
+        data=await listOffers();
     }
     
     
-
-    const data=[
-        {rate:230,quan:20,paddress:14563336},
-        {rate:233,quan:50,paddress:541256},
-        {rate:240,quan:100,paddress:5545852}
-        
-    ]
  
     return(
         <div className="offers">
         <h2 className="heading">Latest Bids</h2>
-        <button className='addicon' onClick={() => setisBid(true)}><FaPlus/></button>
+        <button className='addicon' onClick={() =>{ 
+            if (haveWallet()){
+                setisBid(true)
+            }
+            else{
+                alert("You must add wallet and Smart meter details")
+            }
+            
+            }}><FaPlus/></button>
 
        <Bid isOpen={isbid} onClose={() => setisBid(false)} onSubmit={Sub}  />
-        
+        {console.log(data)}
+        {data.length === 0 ? (
+            <p>No offers</p>
+        ) : (
             <ul>
-                {data.map(
-                    function(para) {
-                    return <li key={para.paddress}><Offer rate={para.rate} quan={para.quan} paddress={para.paddress}  /></li>
-                })
-                }
-                
+                {data.map((para) => (
+                    <li key={para.public_address}>
+                        {console.log(para,para.price,para.quantity,para.public_address)}
+                    
+                        <Offer rate={para.price} quantity={para.price} address={para.public_address} />
+                    </li>
+                ))}
             </ul>
+        )}
            
         </div>
     )
@@ -84,9 +94,9 @@ function Bid({isOpen,onClose,onSubmit}) {
             <span className='icon'><FaCoins/> </span>
             <span id='rate'>rate:{props.rate} </span>
             <span className='icon'><FaBoxOpen/> </span>
-            <span id='quan'>quantity:{props.quan} </span>
+            <span id='quantity'>quantity:{props.quantity} </span>
             <span className='icon'><FaEthereum/> </span>
-            <p id='address'>Public address:{props.paddress} </p>
+            <p id='address'>Public address:{props.address} </p>
         </div>
      );
  }
