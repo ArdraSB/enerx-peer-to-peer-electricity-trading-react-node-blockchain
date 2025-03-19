@@ -39,7 +39,7 @@ function Offers() {
             
             }}><FaPlus/></button>
 
-       <Bid isOpen={isbid} onClose={() => setisBid(false)} onSubmit={Sub}  />
+       <Dialogbox isOpen={isbid} onClose={() => setisBid(false)} onSubmit={Sub}  />
         {console.log(data)}
         {data.length === 0 ? (
             <p>No offers</p>
@@ -61,7 +61,7 @@ function Offers() {
 }
 
 
-function Bid({isOpen,onClose,onSubmit}) {
+function Dialogbox({isOpen,onClose,onSubmit}) {
    
   
     {console.log("bid rendering",isOpen)}
@@ -101,4 +101,4 @@ function Bid({isOpen,onClose,onSubmit}) {
      );
  }
  
-export default Offers 
+export {Offers,Dialogbox} 

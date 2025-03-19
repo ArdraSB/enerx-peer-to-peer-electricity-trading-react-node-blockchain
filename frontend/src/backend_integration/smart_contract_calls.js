@@ -239,8 +239,8 @@ const blockchain={
       ],
 }
 let privateKey="0x6b3b88ba38364666aac2336913c0bc120dc2139cd0aca1b10b178e081bd40d2e";
-const provider = new ethers.JsonRpcProvider(blockchain.rpc_blockchain);
-const signer = new ethers.Wallet(privateKey, provider);
+
+
 
 
 
@@ -256,6 +256,7 @@ const haveWallet=()=>{
 
 const listOffers=async ()=>{
     try{
+        const provider = new ethers.JsonRpcProvider(blockchain.rpc_blockchain);
         const contract = new ethers.Contract( blockchain.contract_address,blockchain.abi,provider);
         console.log("listOffers");
         const tx=await contract.getAllOffers();
@@ -285,6 +286,8 @@ const listOffers=async ()=>{
 }
 const createOffer=async (offer)=>{
     try{
+        const provider = new ethers.JsonRpcProvider(blockchain.rpc_blockchain);
+        const signer = new ethers.Wallet(privateKey, provider);
         const signedContract = new ethers.Contract( blockchain.contract_address,blockchain.abi,signer);
         console.log(offer);
         const quantity=offer.quantity;

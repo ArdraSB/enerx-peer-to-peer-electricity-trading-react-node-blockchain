@@ -1,9 +1,9 @@
 import axios from 'axios'
 
-
+let response;
 const Server="http://localhost:3000";
 const register=async (formJson) => {
-    let response;
+   
     try{
     response=await axios.post(`${Server}/user/register`,formJson)
     if(response.status===200 ){
@@ -23,7 +23,7 @@ const register=async (formJson) => {
 }
 const login=async (formJson,navigate) => {
     
-    let response;
+   
     try{
     response=await axios.post(`${Server}/user/login`,formJson)
     console.log(response)
@@ -43,4 +43,4 @@ const login=async (formJson,navigate) => {
     }
     
 }
-export {login,register}//named exports
+export {login,register,response}//named exports
