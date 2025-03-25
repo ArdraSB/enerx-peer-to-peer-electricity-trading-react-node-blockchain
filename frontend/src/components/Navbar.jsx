@@ -1,12 +1,13 @@
 import './Navbar.css'
 import { Link,useMatch,useResolvedPath } from "react-router-dom";
-
+import { Userdata } from './Profile';
 function Navbar(params)  {
 
     return(
     <nav className="navbar">
-        <Link to='/' className='title'>EnerX</Link>
+        <h3 className="title">EnerX</h3>
         <ol>
+
             <Customlink to='/Profile' name='Profile'/>
             <Customlink to='/Offers' name='Bids list' />
             <Customlink to='/Transactions' name='Transactions'/>

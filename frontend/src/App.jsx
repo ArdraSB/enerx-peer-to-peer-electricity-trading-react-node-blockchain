@@ -6,17 +6,17 @@ import Register from './components/Register'
 import {Offers} from './components/Offers'
 import Navbar from './components/Navbar'
 import Transactions from './components/Transactions'
-import Profile from './components/Profile'
-import { Route,Routes} from "react-router-dom";//new package for routing
+import {Profile} from './components/Profile'
+import { Route,Routes, useLocation} from "react-router-dom";//new package for routing
 
 // import Register from './components/offer'
 
 function App() {
-
+  const location=useLocation();
   
   return (
    <>
-   <Navbar/>
+   {location.pathname!=="/"&& <Navbar/>}
    <div className="container">
     <Routes>
       <Route path='/' element={<Register/>} />

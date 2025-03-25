@@ -3,10 +3,11 @@ import { response } from "../backend_integration/apis"
 import {  FaPlus, FaUser } from "react-icons/fa"
 import Input from "./Input"
 import { useState } from "react"
+import { getBalance, getMoneyBalance } from "../backend_integration/smart_contract_calls"
 
 
-
-export default function Profile(){
+let Userdata;
+function Profile(){
     const Sub =async (e) => {
         e.preventDefault()
         const form=e.target
@@ -17,8 +18,22 @@ export default function Profile(){
         setisBid(false);
     }
     const [isBid,setisBid]=useState(false)
-    const Userdata=response.data
-    // console.log("data in response",Userdata)
+    const [isBid2,setisBid2]=useState(false)
+    const [Energy,setEnergy]=useState(0)
+    const [Money,setMoney]=useState(0)
+
+    
+    Userdata=response.data
+    console.log("data in response",Userdata)
+
+    const balnc=async ()=>{
+        const EnergyBalance=await getBalance();
+        setEnergy(EnergyBalance)
+    }
+    const mbalnc =async ()=>{
+        const MoneyBalance=await getMoneyBalance()
+        setMoney(MoneyBalance)
+    }
     return(
         
         <div className="profile">
@@ -28,20 +43,26 @@ export default function Profile(){
                 <li>{(Userdata.meterid==null)?
                 <div className="plusbutton">
                     <span>no meter id</span>
-                    <button onClick={()=>{return(<Dialogbox isOpen={true}  onClose={() => setisBid(false)} onSubmit={Sub} place="Meterid"/>);}}>Add</button></div>:
-                Userdata.meterid} 
+                    <button onClick={()=>{setisBid(true)}}>Add</button></div>:Userdata.meterid}
                
                 </li>
                 <li>{(Userdata.walletid==null)?
                 <div className="plusbutton">
                     <span>no wallet id</span>
-                    <button onClick={function (){return(<Dialogbox isOpen={true}  onClose={() => setisBid(false)} onSubmit={Sub} place="Meterid"/>);}}>Add</button></div>:
-                Userdata.walletid}
+                    <button onClick={()=>{setisBid2(true)}}>Add</button></div>:
+                <div><h2>Address:<br></br></h2>{Userdata.walletid}</div>}
                 </li>
                 <li>{Userdata.doj}</li>
 
 
             </ul>
+            <Dialogbox isOpen={isBid}  onClose={() => setisBid(false)} onSubmit={Sub} place="Meterid"/>
+            <Dialogbox isOpen={isBid2}  onClose={() => setisBid2(false)} onSubmit={Sub} place="Walletid"/>
+
+                    <button onClick={balnc}> Get Balance</button><br></br>
+                    <h2>Traded Energy :{Energy}</h2>
+                    <button onClick={mbalnc}>Get Balance</button>
+                    <h2>Money Balance:{Money} ETH</h2>
         </div>
     )
 }
@@ -67,3 +88,4 @@ function Dialogbox({isOpen,onClose,onSubmit,place}) {
         );
 }
 
+export {Profile,Dialogbox,Userdata}
