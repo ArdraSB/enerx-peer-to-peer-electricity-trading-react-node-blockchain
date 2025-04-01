@@ -8,6 +8,26 @@
   /* background: linear-gradient(135deg, #1e3c72, #2a5298); */
   font-family: "Poppins", Arial, Helvetica, sans-serif;
 }
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* height: 100vh;  Full viewport height */
+    /* Light background color */
+}
+
+.logo {
+  margin-top:-200px;
+  margin-bottom:75px;
+  width: 500px;   /* Adjust the logo size */
+  height: auto;    /* Maintain aspect ratio */
+  transition: transform 0.3s ease-in-out;  /* Add hover effect */
+}
+
+.logo:hover {
+  transform: scale(1.1);  /* Slight zoom on hover */
+}
+
 
 /* Card-like form container */
 .board {

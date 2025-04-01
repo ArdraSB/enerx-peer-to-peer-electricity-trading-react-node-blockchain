@@ -3,14 +3,14 @@ import './Register.css'
 import Input from './Input';
 import { useNavigate} from 'react-router-dom';
 import {login,register} from "../backend_integration/apis"
-
+import logo from "../assets/logo.png"
 
 
 
 
 function Register() {
 
-    
+    // const logo="../assets/logo.png"
     const [action,setaction] = useState("Login")
     const navigate=useNavigate()
     const submit=async (e)=>{
@@ -26,6 +26,9 @@ function Register() {
     
     return(
         <div className="full">
+             <div className="logo-container">
+            <img src={logo} alt="Logo" className="logo" />
+        </div>
     <div className="cont">
         <button className={action==="Login"?"active":""} onClick={() => setaction("Login")}>Login</button>
         <button className={action==="Register"?"active":""} onClick={() => setaction("Register")}>Register</button> 

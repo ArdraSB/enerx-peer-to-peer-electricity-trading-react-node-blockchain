@@ -1,6 +1,5 @@
 import {ethers} from 'ethers'
-
-
+import { privateKey } from './apis';
 const accounts={
   "account1":"0x6b3b88ba38364666aac2336913c0bc120dc2139cd0aca1b10b178e081bd40d2e",//8893267671
   "account2":"0xde364ac3e2a138c07c60ac867a144a54c7bc514708c991e4f2658db7b4f84176"//7907008629
@@ -208,7 +207,7 @@ const blockchain={
       }
     ],
 }
-let privateKey=accounts.account1;
+
 
 
 
@@ -318,6 +317,13 @@ const getMoneyBalance=async()=>{
   return Math.round(ether);
 
 }
+const getAddress=async()=>{
+  const provider = new ethers.JsonRpcProvider(blockchain.rpc_blockchain);
+  const signer = new ethers.Wallet(privateKey, provider);
+  const address=await signer.address.toString();
+  console.log("address got",privateKey,address);
+  return address;
 
+}
 
-export {blockchain,haveWallet,listOffers,createOffer,sendMoney,getBalance,getMoneyBalance}
+export {blockchain,haveWallet,listOffers,createOffer,sendMoney,getBalance,getMoneyBalance,getAddress}

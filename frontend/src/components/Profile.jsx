@@ -1,91 +1,142 @@
-import { useNavigate } from "react-router-dom"
-import { response } from "../backend_integration/apis"
-import {  FaPlus, FaUser } from "react-icons/fa"
-import Input from "./Input"
-import { useState } from "react"
-import { getBalance, getMoneyBalance } from "../backend_integration/smart_contract_calls"
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { userdata,publicKey } from "../backend_integration/apis";
+import { FaPlus, FaUser, FaEthereum } from "react-icons/fa";
+import Input from "./Input";
+import { saveMeter,saveWallet } from "../backend_integration/apis";
+import {getBalance, getMoneyBalance} from "../backend_integration/smart_contract_calls";
+import './Profile.css';  // Import the new CSS file
 
 
 let Userdata;
-function Profile(){
-    const Sub =async (e) => {
-        e.preventDefault()
-        const form=e.target
-        const frmdata=new FormData(form)
-        const formJson= Object.fromEntries(frmdata.entries());
-        console.log("ids",formJson);
-       
-        setisBid(false);
-    }
-    const [isBid,setisBid]=useState(false)
-    const [isBid2,setisBid2]=useState(false)
-    const [Energy,setEnergy]=useState(0)
-    const [Money,setMoney]=useState(0)
-
+let address;
+function Profile() {
     
-    Userdata=response.data
-    console.log("data in response",Userdata)
-
-    const balnc=async ()=>{
-        const EnergyBalance=await getBalance();
-        setEnergy(EnergyBalance)
+    const [isBid, setisBid] = useState(false);
+    const [isBid2, setisBid2] = useState(false);
+    const [Energy, setEnergy] = useState(0);
+    const [Money, setMoney] = useState(0);
+    try{
+        Userdata = userdata;
+        address=publicKey.toString();
+        console.log(address)
+    }catch(err){
+        alert(err)
     }
-    const mbalnc =async ()=>{
-        const MoneyBalance=await getMoneyBalance()
-        setMoney(MoneyBalance)
-    }
-    return(
-        
-        <div className="profile">
-            <ul>
-                <li><span className='icon'><FaUser/> </span></li>
-                <li><h1>{Userdata.firstname+' '+Userdata.lastname}</h1></li>
-                <li>{(Userdata.meterid==null)?
-                <div className="plusbutton">
-                    <span>no meter id</span>
-                    <button onClick={()=>{setisBid(true)}}>Add</button></div>:Userdata.meterid}
-               
-                </li>
-                <li>{(Userdata.walletid==null)?
-                <div className="plusbutton">
-                    <span>no wallet id</span>
-                    <button onClick={()=>{setisBid2(true)}}>Add</button></div>:
-                <div><h2>Address:<br></br></h2>{Userdata.walletid}</div>}
-                </li>
-                <li>{Userdata.doj}</li>
+    
 
+    const addWallet = async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const frmdata = new FormData(form);
+        const formJson = Object.fromEntries(frmdata.entries());
+        console.log("ids", formJson);
+        try{
+            await saveWallet(formJson);
+        }catch(err){
+            alert(err);
+        }
+        setisBid2(false);
+    };
+    const addMeter = async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const frmdata = new FormData(form);
+        const formJson = Object.fromEntries(frmdata.entries());
+        console.log("ids", formJson,Userdata);
+        try{
+            await saveMeter(formJson);
+        }catch(err){
+            alert(err);
+        }
+        setisBid(false);
+    };
 
-            </ul>
-            <Dialogbox isOpen={isBid}  onClose={() => setisBid(false)} onSubmit={Sub} place="Meterid"/>
-            <Dialogbox isOpen={isBid2}  onClose={() => setisBid2(false)} onSubmit={Sub} place="Walletid"/>
+    const balnc = async () => {
+        const EnergyBalance = await getBalance();
+        setEnergy(EnergyBalance);
+    };
 
-                    <button onClick={balnc}> Get Balance</button><br></br>
-                    <h2>Traded Energy :{Energy}</h2>
-                    <button onClick={mbalnc}>Get Balance</button>
-                    <h2>Money Balance:{Money} ETH</h2>
-        </div>
-    )
-}
+    const mbalnc = async () => {
+        const MoneyBalance = await getMoneyBalance();
+        setMoney(MoneyBalance);
+    };
 
-function Dialogbox({isOpen,onClose,onSubmit,place}) {
-  
-    // {console.log("bid rendering",isOpen)}
-    if (!isOpen) return null;
-    return(
-        
-       <div className="bid-overlay">
-        <div className="bid">
-            <h2>Enter {place}</h2>
-            <form onSubmit={onSubmit}>
-                <Input type='text' name={place} place={place} />
-        <div className="bid-buttons">
-        <button className='cancel' onClick={onClose}>Cancel</button>
-        <button className='submit' type='submit'>Submit</button>
-        </div>
-        </form>
-        </div>
+    return (
+        <div className="profile-container">
+       
+            <div className="profile-card">
+                <div className="profile-header">
+                    <FaUser className="user-icon" />
+                    <h1>{Userdata.firstname + ' ' + Userdata.lastname}</h1>
+                    <p>Member since: {Userdata.doj.toString().split('T')[0]}</p>
+                </div>
+
+                <div className="profile-details">
+                    <div className="detail">
+                        <h3>Meter ID:</h3>
+                        {Userdata.meterid ? (
+                            <span>{Userdata.meterid}</span>
+                        ) : (
+                            <div className="action">
+                                <span>No Meter ID</span>
+                                <button onClick={() => setisBid(true)}>
+                                    <FaPlus /> Add
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="detail">
+                        <h3>Wallet ID:</h3>
+                        {Userdata.walletid ? (
+                            <div className="wallet-box">
+                                <FaEthereum className="wallet-icon" />
+                                <span>{address}</span>
+                            </div>
+                        ) : (
+                            <div className="action">
+                                <span>No Wallet ID</span>
+                                <button onClick={() => setisBid2(true)}>
+                                    <FaPlus /> Add
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="balance-section">
+                        <button className="btn" onClick={balnc}>Get Energy Balance</button>
+                        <h2>Traded Energy: {Energy} kWh</h2>
+
+                        <button className="btn" onClick={mbalnc}>Get Money Balance</button>
+                        <h2>Money Balance: {Money} ETH</h2>
+                    </div>
+                </div>
+            </div>
+
+            <Dialogbox isOpen={isBid} onClose={() => setisBid(false)} onSubmit={addMeter} place="meterId" />
+            <Dialogbox isOpen={isBid2} onClose={() => setisBid2(false)} onSubmit={addWallet} place="walletId" />
        </div>
-        );
+    );
 }
 
-export {Profile,Dialogbox,Userdata}
+function Dialogbox({ isOpen, onClose, onSubmit, place }) {
+    if (!isOpen) return null;
+    return (
+        <div className="dialog-overlay">
+            <div className="dialog-box">
+                <h2>Enter {place}</h2>
+                <form onSubmit={onSubmit}>
+                    <Input type='text' name={place} place={place} />
+                    <input type='hidden' name='phone' value={Userdata.id}/>
+                    <div className="dialog-buttons">
+                        <button className='btn-cancel' onClick={onClose}>Cancel</button>
+                        <button className='btn-submit' type='submit'>Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+}
+
+export { Profile, Dialogbox, Userdata };

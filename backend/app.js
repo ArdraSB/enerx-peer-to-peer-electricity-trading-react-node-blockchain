@@ -22,7 +22,7 @@ app.post("/user/register", async (req, res) => {
             throw 1;
         }
         await pool.query("insert into users (id, firstname, lastname, password) values ($1, $2, $3, $4)", [id, fname, lname, password]);
-        res.status(201).json({ message: "user registered successfully" });
+        res.status(200).json({ message: "user registered successfully" });
 
     }catch (err) {
         if (err==1){
@@ -38,6 +38,7 @@ app.post("/user/login", async (req, res) => {
     console.log("request received",id,password);
     try {
         const result = await pool.query("select * from users where id = $1 and password = $2", [id, password]);
+        
         if (result.rowCount) {
             res.status(200).json(result.rows[0]);
         } else {
@@ -60,3 +61,23 @@ app.delete("/user/delete/:id", async (req, res) => {
         res.status(500).json({ error: "failed to delete user", reason: err.message });
     }
 });
+//to add meter id
+app.post("/user/savemeter",async (req,res)=>{
+    const {meterId,phone}=req.body;
+    try{
+        await pool.query("update users set meterid=$1 where id=$2",[meterId,phone])
+        res.status(200).json({ message: "meterid added" });
+    }catch(err){
+        res.status(500).json({ error:err });
+    }
+})
+//to add wallet id
+app.post("/user/saveWallet",async (req,res)=>{
+    const {walletId,phone}=req.body;
+    try{
+        await pool.query("update users set walletid=$1 where id=$2",[walletId,phone])
+        res.status(200).json({ message: "walletid added" });
+    }catch(err){
+        res.status(500).json({ error:err });
+    }
+})
