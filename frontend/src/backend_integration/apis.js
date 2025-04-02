@@ -36,7 +36,9 @@ const login=async (formJson,navigate) => {
         userdata=response.data
         console.log(userdata.walletid);
         privateKey=userdata.walletid==null?"":userdata.walletid;
-        publicKey=await getAddress();
+        if(privateKey!==""){
+            publicKey=await getAddress();
+        }
         navigate('/Offers')
         console.log("Login successfull");
     }
