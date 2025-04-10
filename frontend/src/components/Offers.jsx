@@ -5,12 +5,30 @@ import Input from './Input';
 import { FaCoins, FaBoxOpen, FaEthereum, FaPlus } from "react-icons/fa"; 
 import { createOffer, haveWallet, listOffers, sendMoney } from '../backend_integration/smart_contract_calls';
 import { Dialogbox } from './Profile';  
+import { fetchThingSpeakData } from '../backend_integration/apis';
 
 function Offers() {
     const [offers, setOffers] = useState([]);
     const [isBid, setIsBid] = useState(false);
     const [isOpen, setOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState({ key: null, value: '' });
+
+    const surplusValidate=async (quantity)=>{
+        try{
+        const consumption=await fetchThingSpeakData(1);
+        const generation=await fetchThingSpeakData(2);
+        const surplus=parseInt(generation)-parseInt(consumption);
+        if (surplus>=quantity){
+            return true;
+        }
+        else{
+            return false;
+        }
+        }catch(err){
+            alert(err);
+        }
+       
+    }
 
   const handleClick = (index) => {
     console.log("clicked",offers[index])
@@ -42,7 +60,15 @@ function Offers() {
         const frmdata = new FormData(form);
         const formJson = Object.fromEntries(frmdata.entries());
         console.log("bid details", formJson);
-        await createOffer(formJson);
+        const quantity=parseInt(formJson.quantity);
+        const ifValid=await surplusValidate(quantity);
+        if (ifValid==true){
+            await createOffer(formJson);
+        }
+        else{
+            alert("dont have sufficient energy to trade");
+        }
+        
         setIsBid(false);
 
         // Reload offers after submission

@@ -6,6 +6,10 @@ let userdata;
 let privateKey;
 let publicKey;
 const Server="http://localhost:3000";
+const CHANNEL_ID = "2902425"; // ThingSpeak Channel id
+const READ_API_KEY = "Q42QUJHQHEK9F1US"; //ThinkSpeak Read API Key
+
+//register user
 const register=async (formJson) => {
    
     try{
@@ -26,6 +30,7 @@ const register=async (formJson) => {
     }
     
 }
+//login user
 const login=async (formJson,navigate) => {
     
    
@@ -34,7 +39,7 @@ const login=async (formJson,navigate) => {
     console.log(response)
     if(response.status===200 ){
         userdata=response.data
-        console.log(userdata.walletid);
+        console.log(userdata);
         privateKey=userdata.walletid==null?"":userdata.walletid;
         if(privateKey!==""){
             publicKey=await getAddress();
@@ -95,4 +100,18 @@ const saveWallet=async (data)=>{
             
         }
  }
-export {login,register,userdata,saveMeter,saveWallet,privateKey,publicKey}//named exports
+
+ //IOTCLOUD API REQUESTS
+ const fetchThingSpeakData = async (fieldNumber) => {
+    try {
+      const response = await axios.get(
+        `https://api.thingspeak.com/channels/${CHANNEL_ID}/fields/${fieldNumber}/last.json?api_key=${READ_API_KEY}`
+      );
+      console.log(response.data);
+      return response.data[`field${fieldNumber}`]; // Extract specific field value
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return null;
+    }
+  };
+export {login,register,userdata,saveMeter,saveWallet,privateKey,publicKey,fetchThingSpeakData}//named exports
